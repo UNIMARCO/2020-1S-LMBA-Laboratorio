@@ -9,10 +9,8 @@ navbar:
     href: https://www.viroplant.eu/
   search: true
   right:
-    - text: "Citations"
-      href: Citations.html
     - text: "Contacts"
       href: contacts.html
     - icon: fab fa-github
-      href: https://github.com/mchiapello/202010_VirusDetection
+      href: https://github.com/UNIMARCO/2020-1S-LMBA-Laboratorio
 output: distill::distill_article

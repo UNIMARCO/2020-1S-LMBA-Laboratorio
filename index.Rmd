@@ -1,7 +1,7 @@
 ---
-title: "Bioinformatics analysis of viromes"
+title: "LBMA - Corso di Laboratorio (analisi dati)"
 description: |
-  Short course on virus identification from fungal samples!
+  Questo corso sarebbe dovuto essere un corso di esercitazioni in laboratorio ma viste le restrizioni per la pandemia di Sars-Cov2, il corso si terrà in forma virtuale e sarà focalizzato su: analisi dei dati
 site: distill::distill_website
 ---
 
@@ -18,11 +18,9 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Schedule
 
-| Hour | Goal |
+| Day | Goal |
 |---|---|
-|9:00 - 9:15 | General introduction and presentations|
-|9:15 - 9:30 | [Course goal and expectations](Pres/Pres0.html)
-|9:30 - 9:45 | Expected output
-|9:45 - 11:00| [Pipeline bird's eye view](Pres/Pres1.html)
-|11:00 - 11:15| Break
-|11:15 - 13 | Q&A
+|Dec 15 (1 hours) | [Reproducible research](Pres/rr.html)|
+|Dec 15 (2 hours) | [Spreadsheet analysis](Pres/rr.html)|
+|Dec 18 (2 hours) | [Course goal and expectations](Pres/Pres0.html)
+|Dec 22 (3 hours) | Expected output

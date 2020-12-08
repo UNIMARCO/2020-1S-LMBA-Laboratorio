@@ -168,6 +168,16 @@
     margin: 15px;
 }
 
+.content-box-orange2 p {
+    border-radius: 15px;
+    overflow: hidden;
+    display: block;
+    text-align: center;
+    padding: 2px;
+	background-color: #e6550d;
+    margin: 15px;
+}
+
 .content-box-grey4 p {
     border-radius: 15px;
     overflow: hidden;
