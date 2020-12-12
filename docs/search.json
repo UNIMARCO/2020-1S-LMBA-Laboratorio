@@ -1,0 +1,35 @@
+{
+  "articles": [
+    {
+      "path": "Intro.html",
+      "title": "General introduction and presentations",
+      "author": [],
+      "contents": "\nRound table\nGeneral presentations\n\n\n\n\n",
+      "last_modified": "2020-12-08T08:41:17+01:00"
+    },
+    {
+      "path": "about.html",
+      "title": "About this site",
+      "description": "Some additional details about the website",
+      "author": [],
+      "contents": "\n\n\n\n",
+      "last_modified": "2020-12-08T08:41:18+01:00"
+    },
+    {
+      "path": "contacts.html",
+      "title": "Contacts",
+      "author": [],
+      "contents": "\nPerson\nemail\nskype\nMarco Chiapello\nmarco.chiapello (at) ipsp.cnr.it\nmarpello1980\n\n\n\n",
+      "last_modified": "2020-12-08T08:41:18+01:00"
+    },
+    {
+      "path": "index.html",
+      "title": "LBMA - Corso di Laboratorio (analisi dati)",
+      "description": "Questo corso sarebbe dovuto essere un corso di esercitazioni in laboratorio ma viste le restrizioni per la pandemia di Sars-Cov2, il corso si terrà in forma virtuale e sarà focalizzato su: analisi dei dati\n",
+      "author": [],
+      "contents": "\nSchedule\nDay\nGoal\nDec 15 (1 hours)\nReproducible research\nDec 15 (2 hours)\nSpreadsheet analysis\nDec 18 (2 hours)\nPhylogenetic trees\nDec 22 (3 hours)\nR intro\n\n\n\n",
+      "last_modified": "2020-12-08T08:41:19+01:00"
+    }
+  ],
+  "collections": []
+}
