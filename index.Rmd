@@ -1,7 +1,7 @@
 ---
-title: "LBMA - Corso di Laboratorio (analisi dati)"
+title: "LBMA - Wet lab module"
 description: |
-  Questo corso sarebbe dovuto essere un corso di esercitazioni in laboratorio ma viste le restrizioni per la pandemia di Sars-Cov2, il corso si terrà in forma virtuale e sarà focalizzato su: analisi dei dati
+  Due to Sars-cov2 pandemic this course switched from wet to dry lab. We will focus our attention on **data analysis**.
 site: distill::distill_website
 ---
 
