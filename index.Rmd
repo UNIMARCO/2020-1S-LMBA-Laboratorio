@@ -20,7 +20,8 @@ knitr::opts_chunk$set(echo = FALSE)
 
 | Day | Goal |
 |---|---|
-|Dec 15 (1 hours) | [Reproducible research](Pres/rr.html)|
+|Dec 15 (1 hour) | [Reproducible research](Pres/rr.html)|
 |Dec 15 (2 hours) | [Spreadsheet analysis](https://datacarpentry.org/spreadsheet-ecology-lesson/)|
-|Dec 18 (2 hours) | [Phylogenetic trees](Pres/Pres0.html)
-|Dec 22 (3 hours) | [R intro](https://datacarpentry.org/R-ecology-lesson/)
+|Dec 18 (2 hours) | [R intro](https://datacarpentry.org/R-ecology-lesson/)
+|Dec 22 (2 hours) | [R intro](https://datacarpentry.org/R-ecology-lesson/)
+|Dec 22 (1 hour) | [Phylogenetic trees](Pres/Pres0.html)
