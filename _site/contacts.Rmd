@@ -1,0 +1,4 @@
+| Person | email | skype |
+|--- |--- |--- |
+|Marco Chiapello | marco.chiapello (at) ipsp.cnr.it | marpello1980
+

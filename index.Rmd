@@ -24,4 +24,4 @@ knitr::opts_chunk$set(echo = FALSE)
 |Dec 15 (2 hours) | [Spreadsheet analysis](https://datacarpentry.org/spreadsheet-ecology-lesson/)|
 |Dec 18 (2 hours) | [R intro](https://datacarpentry.org/R-ecology-lesson/)
 |Dec 22 (2 hours) | [R intro](https://datacarpentry.org/R-ecology-lesson/)
-|Dec 22 (1 hour) | [Phylogenetic trees](Pres/Pres0.html)
+|Dec 22 (1 hour) | [Phylogenetic trees](Pres/phylogeneticTrees.html)

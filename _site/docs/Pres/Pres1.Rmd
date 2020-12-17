@@ -1,0 +1,2370 @@
+```{r setup, include=FALSE, cache=FALSE}
+# set working directory to docs folder
+#setwd(here::here("docs"))
+
+# Set global R options
+options(htmltools.dir.version = FALSE, servr.daemon = TRUE)
+
+# Set global knitr chunk options
+knitr::opts_chunk$set(
+  fig.align = "center", 
+  cache = TRUE,
+  error = FALSE,
+  message = FALSE, 
+  warning = FALSE, 
+  collapse = TRUE 
+)
+
+# xaringanExtra
+library(xaringanExtra)
+use_tile_view() 
+use_share_again()
+style_share_again(share_buttons = c("none"))
+
+library(RefManageR)
+BibOptions(check.entries = FALSE,
+           bib.style = "authoryear",
+           cite.style = "authoryear",
+           style = "markdown",
+           hyperlink = FALSE,
+           dashed = FALSE)
+bib <- ReadBib("biblio/bib.bib", check = FALSE)
+```
+
+class: title-slide
+
+<br>
+.font200[.f700[Bioinformatics analysis of viromes]]<br>
+.font120[Turina's Lab pipeline for virome identification]
+
+<br>
+<br>
+.marco[
+Marco Chiapello
+<br>
+October 26, 2020
+]
+
+---
+
+class: clear
+
+.f40[**Agenda**]
+
+.pull-left[
+.par26[
+
+- Pipeline
+  - Quality check
+  - Data cleaning
+  - Assembly
+  - Blast against viralDB
+  - Manual selection I
+  - Blast against NCBInr
+  - Manual selection II
+  - Uni-virus list
+  - Mapping
+  - Taxonomy classification
+
+- Orfans identification
+]
+]
+
+.pull-right[
+.par26[
+
+- General recommandetions<br><br>
+  - Software version
+  - Avoid manual operation
+  - Backup
+  - Version control
+  - Working directory  
+
+]
+]
+
+---
+
+class: clear
+
+.f40[**Agenda**]
+
+.pull-left[
+.par26.opacity10[
+
+- Pipeline
+  - Quality check
+  - Data cleaning
+  - Assembly
+  - Blast against viralDB
+  - Manual selection I
+  - Blast against NCBInr
+  - Manual selection II
+  - Uni-virus list
+  - Mapping
+  - Taxonomy classification
+
+- Orfans identification
+]
+]
+
+.pull-right[
+.par26[
+
+- General recommandetions<br><br>
+  - Software version
+  - Avoid manual operation
+  - Backup
+  - Version control
+  - Working directory  
+
+]
+]
+
+---
+
+class: clear
+
+.f40[**Agenda**]
+
+.pull-left[
+.par26[
+
+- Pipeline
+  - Quality check
+  - Data cleaning
+  - Assembly
+  - Blast against viralDB
+  - Manual selection I
+  - Blast against NCBInr
+  - Manual selection II
+  - Uni-virus list
+  - Mapping
+  - Taxonomy classification
+
+- Orfans identification
+]
+]
+
+.pull-right[
+.par26[
+
+- General recommandetions<br><br>
+  - ~~Software version~~
+  - <del>Avoid manual operation        </del>
+  - <del>Backup</del>
+  - <del>Version control</del>
+  - <del>Working directory</del>  
+
+]
+]
+
+---
+
+class: middle, center, clear
+
+# .black[General recommendations] 
+
+----
+
+---
+class: clear, middle, center
+
+
+.f70[.f900[GOAL<br>**Reproducible analysis**]]
+
+----
+
+---
+
+layout: true
+
+# General recommandetions .rightH1[
+`r fontawesome::fa("code", fill = "white")`
+]
+
+---
+
+## Software version
+
+<br>
+.content-box-red[
+**ALWAYS** store the software version you use!
+<br>
+Store the DB version and each package or plugin version
+]
+
+---
+
+## Avoid manual operation
+<br>
+.content-box-red[
+Manual operation are error prone and very difficult to replicate<br>
+<br>
+Use a programming language to do your analysis
+]
+
+<br>
+<br>
+.right.font50[Not everyone should be able to program! **Bioinformaticians** are among us for this purpuse]
+
+---
+
+## Backup
+
+<br>
+.content-box-red[
+**Always** back up you raw data    
+**Always** back up you scripts
+<br>
+Intermidiate files can be regenerated
+]
+
+---
+
+## Version control
+
+.pull-left[
+<br>
+.content-box-red[
+**Version control** is a fundamental to keep track of changes
+]
+
+.par10[
+Version control is a class of systems responsible for managing changes to computer programs, documents, large web sites, or other collections of information]
+]
+
+    
+.pull-right[
+.m0[
+```{r echo=FALSE, out.width="350px"}
+knitr::include_graphics("images/vercon1.png")
+```
+]]
+
+---
+
+## Working directory
+
+.content-box-red[
+**Organize you projects**
+]
+
+```{r echo=FALSE, out.width="900px"}
+knitr::include_graphics("images/wd1.png")
+```
+
+---
+
+layout: false
+class: middle, center, clear
+
+# .black[Sequencing by synthesis] 
+
+----
+
+---
+
+# Sequencing by synthesis
+
+.center[
+.middle[
+<iframe width="840" height="473" src="https://www.youtube.com/embed/fCd6B5HRaZ8" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+]
+]
+
+---
+
+# Kmers
+
+.pull-left[
+.par25[
+
+- In bioinformatics, k-mers are subsequences of length k contained within a biological sequence
+
+- Primarily used within the context of computational genomics and sequence analysis
+
+- In sequence assembly, k-mers are used during the construction of De Bruijn graphs
+]
+]
+
+    
+.pull-right[
+```{r echo=FALSE, out.width="300px"}
+knitr::include_graphics("images/kmer2.svg")
+```
+]
+
+---
+
+# Kmers
+
+```{r echo=FALSE, out.width="900px"}
+knitr::include_graphics("images/kmer1.png")
+```
+
+---
+
+# De Bruijn graphs
+
+```{r echo=FALSE, out.width="550px"}
+knitr::include_graphics("images/kmer3.png")
+```
+
+---
+
+layout: false
+class: inverse, middle, center
+
+# Pipeline
+
+----
+
+---
+
+class: clear, middle, center
+
+.f50[.red[DISCLAIM]]
+
+.black[This is a **Command Line Interface** lesson]
+
+.font200[`r fontawesome::fa("terminal", fill = "black")`] 
+
+---
+
+class: middle, center, clear
+
+# .black[Quality check]
+
+----
+
+---
+
+layout: true
+
+# Quality check
+
+---
+
+.f50[On raw data]
+
+.pull-left[
+.par30[
+
+- md5sum is a computer program that calculates and verifies 128-bit MD5 hashes
+
+- The MD5 hash functions as a compact digital fingerprint of a file
+]
+]
+
+---
+
+.f50[md5sum]
+
+.pull-left[
+.par30[
+
+- md5sum is a computer program that calculates and verifies 128-bit MD5 hashes
+
+- The MD5 hash functions as a compact digital fingerprint of a file
+]
+]
+
+.pull-right[
+
+<br>
+.center[.f120[.f700[**DEMO**]]]
+]
+
+---
+
+.lp[
+
+.f40[fastq sequence]
+<br>
+<br>
+<br>
+
+```
+@SRR031716.1 HWI-EAS299_4_30M2BAAXX:3:1:944:1798 length=37
+
+GTGGATATGGATATCCAAATTATATTTGCATAATTTG
+
++SRR031716.1 HWI-EAS299_4_30M2BAAXX:3:1:944:1798 length=37
+
+IIIIIIIIIIIIIIIIIIIIIIIIIIIII8IIIIIII
+```
+]
+
+---
+
+.lp[
+
+.f40[fastq sequence]
+<br>
+<br>
+<br>
+
+```
+@SRR031716.1 HWI-EAS299_4_30M2BAAXX:3:1:944:1798 length=37
+
+GTGGATATGGATATCCAAATTATATTTGCATAATTTG
+
++SRR031716.1 HWI-EAS299_4_30M2BAAXX:3:1:944:1798 length=37
+
+IIIIIIIIIIIIIIIIIIIIIIIIIIIII8IIIIIII
+```
+]
+
+```{r echo=FALSE, out.width="1100px"}
+knitr::include_graphics("images/001.png")
+```
+
+
+---
+
+.lp[
+
+.f40[fastq sequence]
+<br>
+<br>
+<br>
+
+```
+@SRR031716.1 HWI-EAS299_4_30M2BAAXX:3:1:944:1798 length=37
+
+GTGGATATGGATATCCAAATTATATTTGCATAATTTG
+
++SRR031716.1 HWI-EAS299_4_30M2BAAXX:3:1:944:1798 length=37
+
+IIIIIIIIIIIIIIIIIIIIIIIIIIIII8IIIIIII
+```
+]
+
+```{r echo=FALSE, out.width="900px"}
+knitr::include_graphics("images/002.png")
+```
+
+---
+
+class: clear, middle, center
+
+.f70[.f900[FastQC]]
+
+.m0tp[
+.f15[https://www.bioinformatics.babraham.ac.uk/projects/fastqc/]
+]
+
+----
+
+---
+
+layout: true
+
+# FastQC
+
+---
+
+## What is FastQC?
+
+.m0tp.par26[
+
+-  Modern high throughput sequencers can generate hundreds of millions of sequences in a single run. Before analysing this sequence to draw biological conclusions you should **always perform some simple quality control checks to ensure that the raw data looks good** and there are no problems or biases in your data which may affect how you can usefully use it.
+
+- **FastQC aims to provide a QC report which can spot problems** which originate either in the sequencer or in the starting library material.
+
+- FastQC can be run in one of two modes. It can either **run as a stand alone interactive application** for the immediate analysis of small numbers of FastQ files, or it can be run in a non-interactive mode where it would be suitable for **integrating into a larger analysis pipeline** for the systematic processing of large numbers of files. 
+
+```
+> fastqc CP1/Cp1_1.fastq.gz CP1/Cp1_2.fastq.gz CP2/Cp2_1.fastq.gz CP2/Cp2_2.fastq.gz \
+  GNO/Gno_1.fastq.gz GNO/Gno_2.fastq.gz -o quality -t 6
+```
+]
+
+---
+
+## Evaluating Results
+
+.pull-left[
+.m0tp[
+.par20[
+
+-  **The analysis in FastQC is performed by a series of analysis modules**. The left hand side of the main interactive display or the top of the HTML report show a summary of the modules which were run, and a quick evaluation of whether the results of the module seem entirely normal (green tick), slightly abnormal (orange triangle) or very unusual (red cross).
+
+- It is important to stress that although the analysis results appear to give a pass/fail result, these **evaluations must be taken in the context of what you expect from your library**. Some experiments may be expected to produce libraries which are biased in particular ways. You should treat the summary evaluations therefore as pointers to where you should concentrate your attention and understand why your library may not look random and diverse.
+
+]
+]
+]
+
+.pull-rigth[
+<br>
+```{r echo=FALSE, out.width="550px"}
+knitr::include_graphics("images/Fqc1.png")
+```
+]
+
+???
+
+happy families are all alike 
+
+every unhappy family is unhappy in its own way
+
+---
+
+.pull-left[
+**Basic Statistics**
+
+.m0.par20[
+The Basic Statistics module generates some simple composition statistics for the file analysed
+]
+
+.m3t[
+.par20[
+
+- **Filename**: The original filename of the file which was analysed 
+-  **File type**: Says whether the file appeared to contain actual base calls or colorspace data which had to be converted to base calls
+-  **Encoding**: Says which ASCII encoding of quality values was found in this file.
+-  **Total Sequences**: A count of the total number of sequences processed. 
+-  **Filtered Sequences**: The number of sequences with poor quality.
+-  **Sequence Length**: Provides the length of the shortest and longest sequence in the set. If all sequences are the same length only one value is reported.
+-  **%GC**: The overall %GC of all bases in all sequences
+
+]
+]
+]
+
+    
+.pull-right[
+<br>
+```{r echo=FALSE, out.width="600px"}
+knitr::include_graphics("images/Fqc2.png")
+```
+]
+
+---
+
+.pull-left[
+**Per Base Sequence Quality**
+
+.m0.par20[
+This view shows an overview of the range of quality values across all bases at each position in the FastQ file
+]
+
+.m0tp[
+.par20[
+
+- The y-axis on the graph shows the quality scores. 
+
+- For each position a BoxWhisker type plot is drawn
+
+- The higher the score the better the base call.
+ 
+- The background of the graph divides the y axis into very good quality calls (green), calls of reasonable quality (orange), and calls of poor quality (red).
+  
+- The quality of calls on most platforms will degrade as the run progresses, so it is common to see base calls falling into the orange area towards the end of a read
+]
+]
+]
+
+    
+.pull-right[
+<br>
+```{r echo=FALSE, out.width="600px"}
+knitr::include_graphics("images/Fqc3.png")
+```
+]
+
+
+---
+
+.pull-left[
+**Per Base Sequence Quality**
+
+.m0.par20[
+This view shows an overview of the range of quality values across all bases at each position in the FastQ file
+]
+
+.m0tp[
+.par20[
+
+- The y-axis on the graph shows the quality scores. 
+
+- For each position a BoxWhisker type plot is drawn
+
+- The higher the score the better the base call.
+ 
+- The background of the graph divides the y axis into very good quality calls (green), calls of reasonable quality (orange), and calls of poor quality (red).
+  
+- The quality of calls on most platforms will degrade as the run progresses, so it is common to see base calls falling into the orange area towards the end of a read
+]
+]
+]
+
+    
+.pull-right[
+<br>
+```{r echo=FALSE, out.width="600px"}
+knitr::include_graphics("images/Fqc4.png")
+```
+]
+
+---
+
+.pull-left[
+**Per Tile Sequence Quality**
+
+.m0.par20[
+ The graph allows you to look at the quality scores from each tile across all of your bases to see if there was a loss in quality associated with only one part of the flowcell
+]
+
+.m0tp[
+.par20[
+
+- The plot shows the deviation from the average quality for each tile
+
+- The colours are on a cold to hot scale, with cold colours being positions where the quality was at or above the average and hotter colours indicate that a tile had worse qualities than other tiles for that base
+
+- A good plot should be blue all over.
+]
+]
+]
+
+    
+.pull-right[
+<br>
+```{r echo=FALSE, out.width="600px"}
+knitr::include_graphics("images/Fqc6.png")
+```
+]
+
+---
+
+.pull-left[
+**Per Tile Sequence Quality**
+
+.m0.par20[
+ The graph allows you to look at the quality scores from each tile across all of your bases to see if there was a loss in quality associated with only one part of the flowcell
+]
+
+.m0tp[
+.par20[
+
+- The plot shows the deviation from the average quality for each tile
+
+- The colours are on a cold to hot scale, with cold colours being positions where the quality was at or above the average and hotter colours indicate that a tile had worse qualities than other tiles for that base
+
+- A good plot should be blue all over.
+]
+]
+]
+
+    
+.pull-right[
+<br>
+```{r echo=FALSE, out.width="600px"}
+knitr::include_graphics("images/Fqc7.png")
+```
+]
+
+---
+
+.pull-left[
+**Per Sequence Quality Scores**
+
+.m0.par20[
+The per sequence quality score report allows you to see if a subset of your sequences have universally low quality values
+]
+
+.m0tp[
+.par20[
+
+- If a significant proportion of the sequences in a run have overall low quality then this could indicate some kind of systematic problem - possibly with just part of the run (for example one end of a flowcell)
+
+- This module is generally fairly robust and errors here usually indicate a general loss of quality within a run
+
+- For long runs this may be alleviated through quality trimming
+]
+]
+]
+
+    
+.pull-right[
+<br>
+```{r echo=FALSE, out.width="600px"}
+knitr::include_graphics("images/Fqc8.png")
+```
+]
+
+---
+
+.pull-left[
+**Per Base Sequence Content**
+
+.m0.par20[
+Per Base Sequence Content plots out the proportion of each base position in a file for which each of the four normal DNA bases has been called
+]
+
+.m0tp[
+.par20[
+
+- In a random library you would expect that there would be little to no difference between the different bases of a sequence run
+  
+- So the lines in this plot should run parallel with each other
+
+- Libraries produced by priming using random hexamers (including nearly all RNA-Seq libraries) inherit an intrinsic bias in the positions at which reads start. This bias does not concern an absolute sequence, but instead provides enrichement of a number of different K-mers at the 5' end of the reads
+]
+]
+]
+
+    
+.pull-right[
+<br>
+```{r echo=FALSE, out.width="600px"}
+knitr::include_graphics("images/Fqc5.png")
+```
+]
+
+---
+
+.pull-left[
+**Per Sequence GC Content**
+
+.m0.par20[
+This module measures the GC content across the whole length of each sequence in a file and compares it to a modelled normal distribution of GC content
+]
+
+.m0tp[
+.par20[
+
+- In a normal random library you would expect to see a roughly normal distribution of GC content where the central peak corresponds to the overall GC content of the underlying genome
+
+- An unusually shaped distribution could indicate a contaminated library or some other kinds of biased subset
+
+- Sharp peaks on an otherwise smooth distribution are normally the result of a specific contaminant (adapter dimers for example), which may well be picked up by the overrepresented sequences module
+]
+]
+]
+
+    
+.pull-right[
+<br>
+```{r echo=FALSE, out.width="600px"}
+knitr::include_graphics("images/Fqc9.png")
+```
+]
+
+---
+
+
+.pull-left[
+**Per Base N Content**
+
+.m0.par20[
+If a sequencer is unable to make a base call with sufficient confidence then it will normally substitute an N rather than a conventional base call
+]
+
+.m0tp[
+.par20[
+
+- It's not unusual to see a very low proportion of Ns appearing in a sequence
+
+- If this proportion rises above a few percent it suggests that the analysis pipeline was unable to interpret the data well enough to make valid base calls
+]
+]
+]
+
+    
+.pull-right[
+<br>
+```{r echo=FALSE, out.width="600px"}
+knitr::include_graphics("images/Fqc10.png")
+```
+]
+
+---
+
+
+.pull-left[
+**Sequence Length Distribution**
+
+.m0.par20[
+Some high throughput sequencers generate sequence fragments of uniform length, but others can contain reads of wildly varying lengths
+]
+
+.m0tp[
+.par20[
+
+- In many cases this will produce a simple graph showing a peak only at one size
+
+- For variable length FastQ files this will show the relative amounts of each different size of sequence fragment
+]
+]
+]
+
+    
+.pull-right[
+<br>
+```{r echo=FALSE, out.width="600px"}
+knitr::include_graphics("images/Fqc11.png")
+```
+]
+
+---
+
+
+.pull-left[
+**Duplicate Sequences**
+
+.m0.par20[
+In a diverse library most sequences will occur only once in the final set. A low level of duplication may indicate a very high level of coverage of the target sequence, but a high level of duplication is more likely to indicate some kind of enrichment bias (eg PCR over amplification)
+]
+
+.m0tp[
+.par20[
+
+- Only sequences which first appear in the first 100,000 sequences in each file are analysed
+
+- Each sequence is tracked to the end of the file to give a representative count of the overall duplication level
+
+-  There are two lines on the plot.
+  - The blue line takes the full sequence set and shows how its duplication levels are distributed.
+  - In the red plot the sequences are de-duplicated
+]
+]
+]
+
+    
+.pull-right[
+<br>
+```{r echo=FALSE, out.width="600px"}
+knitr::include_graphics("images/Fqc12.png")
+```
+]
+
+---
+
+.pull-left[
+**Duplicate Sequences**
+
+.m0.par20[
+Let's take two examples where each contain 20 reads:
+
+- Case 1: 10 unique reads +  5 reads each present twice (duplicates)
+- Case 2: 10 unique reads + 1 read present 10 times 
+
+]
+
+.m0tp[
+.par15[
+
+- **Case 1** shown in the upper plot will lead to 15 distinct reads and thus 15/20=75% percent remaining, the number of singletons is 1x10 =10 and the number of doubles is 5x2 =10 therefore the blue line has a plateau at those rates. The 15 distinct sequences are distributed as  10 singletons and 5 duplicates, 10/15=66% and 5/15=33% is the slope of the red line.
+
+- **Case 2** will produce 11 distinct reads and therefore 11/20=55% will be the precent remaining reads. Again the total number of reads is equally distributed between the two cases but this time the peak will be at 10 since we have one read duplicated 10 times and that produces 10 sequences. But there are 11 total groups where 10/11=91% are singletons and 1/11=9% of the groups form at duplication rate of 10x.
+]
+]
+]
+
+    
+.pull-right[
+<br>
+```{r echo=FALSE, out.width="600px"}
+knitr::include_graphics("images/Fqc14.png")
+```
+]
+
+---
+
+.pull-left[
+**Overrepresented Sequences**
+
+.m0.par20[
+A normal high-throughput library will contain a diverse set of sequences, with no individual sequence making up a tiny fraction of the whole
+<br><br>
+- Finding that a single sequence is very overrepresented in the set either means that it is highly biologically significant, or indicates that the library is contaminated
+
+- This module lists all of the sequence which make up more than 0.1% of the total
+
+- Only sequences which appear in the first 100,000 sequences are tracked to the end of the file
+]
+]
+
+
+    
+.pull-right[
+<br>
+```{r echo=FALSE, out.width="700px"}
+knitr::include_graphics("images/Fqc15.png")
+```
+]
+
+---
+
+.pull-left[
+**Adapter Content**
+
+.m0.par20[
+The Kmer Content module will do a generic analysis of all of the Kmers in your library to find those which do not have even coverage through the length of your reads. This can find a number of different sources of bias in the library which can include the presence of read-through adapter sequences building up on the end of your sequences
+]
+]
+
+    
+.pull-right[
+<br>
+```{r echo=FALSE, out.width="600px"}
+knitr::include_graphics("images/Fqc13.png")
+```
+]
+
+---
+
+```{r echo=FALSE, out.width="500px"}
+knitr::include_graphics("images/questions.png")
+```
+
+---
+
+class: middle, center, clear
+
+# .black[Data cleaning] `r fontawesome::fa("broom", fill = "black")`
+
+----
+
+---
+
+class: clear, middle, center
+
+.f70[.f900[BBTools]]
+
+.m0tp[
+.f15[https://jgi.doe.gov/data-and-tools/bbtools/]
+]
+
+----
+
+---
+
+layout: false
+# Sketch .rightH1[
+`r fontawesome::fa("broom", fill = "white")`
+]
+ 
+
+.par23[
+- This tool use a technique called MinHash to rapidly compare large sequences.  
+
+- The result is similar to BLAST; a list of hits from a query sequence to various reference sequences, sorted by similarity, but the mechanisms are very different. 
+
+- Sketch is designed to be extremely fast (potentially thousands of times faster than BLAST) while having a very low disk and memory footprint, but gives more approximate results and does not produce alignments.
+]
+<br>
+```{r echo=FALSE, out.width="1100px"}
+knitr::include_graphics("images/ske1.png")
+```
+
+---
+
+# Sketch .rightH1[
+`r fontawesome::fa("broom", fill = "white")`
+]
+
+```{r echo = FALSE}
+library(tidyverse)
+library(DT)
+library(widgetframe)
+x <- read_csv("images/SketchSummary.csv") %>%
+    mutate(#Pool = factor(Pool),
+           rank = factor(rank, levels = c("superkingdom", "kingdom", "subkingdom",
+                                          "phylum", "subphylum",
+                                          "class", "subclass",
+                                          "order", "family", "genus", "species")),
+           name = factor(name)) 
+
+x <- x %>%
+   filter(Pool %in% c("CP1_1", "CP1_2", "CP2_1", "CP2_2", "GNO_1", "GNO_2")) %>%
+   mutate(Pool = factor(Pool))
+
+dt <- x %>%
+    datatable(
+      rownames = FALSE,
+      filter = "top",
+      extensions = 'Buttons',
+      options = list(#dom = 'Bsftlip',
+                     dom = 'tBp',
+                     buttons = c('csv', 'copy'))
+      )
+
+frameWidget(dt)
+```
+
+---
+
+# Clumpify .rightH1[
+`r fontawesome::fa("broom", fill = "white")`
+]
+
+.pull-left[
+.m0tp[
+.par23[
+
+- Clumpify is a tool designed to rapidly **group overlapping reads into clumps** 
+  
+- This can be used as a way to increase file compression, accelerate overlap-based assembly, or accelerate applications such as mapping 
+
+```
+> clumpify.sh in=reads.fq.gz out=clumped.fq.gz
+```
+]
+]
+]
+
+    
+.pull-right[
+```{r echo=FALSE, out.width="500px"}
+knitr::include_graphics("images/clu1.png")
+```
+]
+
+---
+
+# BBDuk .rightH1[
+`r fontawesome::fa("broom", fill = "white")`
+]
+
+.par23[
+- "Duk" stands for Decontamination Using Kmers
+
+- BBDuk was developed to combine most common data-quality-related trimming, filtering, and masking operations into a single high-performance tool
+
+- It is capable of quality-trimming and filtering, adapter-trimming, contaminant-filtering via kmer matching, sequence masking, GC-filtering, length filtering, entropy-filtering, format conversion, histogram generation, subsampling, quality-score recalibration, kmer cardinality estimation, and various other operations in a single pass
+
+- Any combination of operations is possible in a single pass, with the exception of kmer-based operations (kmer trimming, kmer masking, or kmer filtering); at most 1 kmer-based operation can be done in a single pass
+]
+
+---
+
+# BBDuk - Adapter trimming .rightH1[
+`r fontawesome::fa("broom", fill = "white")`
+]
+
+```
+> bbduk.sh in=reads.fq out=clean.fq ref=adapters.fa ktrim=r k=23 mink=11 hdist=1 tpe tbo
+```
+
+.par23[
+
+- "ktrim=r" is for right-trimming (3′ adapters)    
+
+- "k" specifies the kmer size to use (must be at most the length of the adapters)    
+
+- "mink"" allows it to use shorter kmers at the ends of the read    
+
+- "hdist" means “hamming distance”; this allows one mismatch    
+
+- "tbo" which specifies to also trim adapters based on pair overlap detection    
+
+- "tpe" which specifies to trim both reads to the same length    
+]
+
+---
+
+# BBDuk - Kmer filtering .rightH1[
+`r fontawesome::fa("broom", fill = "white")`
+]
+
+## Artefacts removal
+
+```
+> bbduk.sh in=reads.fq out=unmatched.fq outm=matched.fq ref=phix.fa.gz k=31 hdist=1 stats=stats.txt
+``` 
+<br>
+.par23[
+This will remove all reads that have a 31-mer match to phix sequences (common illumina spiked in sequences), allowing one mismatch
+
+"stats" will produce a report of which contaminant sequences were seen
+
+The “outm” stream will catch reads that matched a reference kmers
+
+.content-box-red[
+This allows you to split a set of reads based on the presence of something
+]
+]
+
+---
+
+# BBDuk - Kmer filtering .rightH1[
+`r fontawesome::fa("broom", fill = "white")`
+]
+
+## Short removal
+
+```
+> bbduk.sh in=reads.fq out=unmatched.fq outm=matched.fq ref=short.fa.gz k=31 hdist=1 stats=stats.txt
+``` 
+<br>
+.par23[
+This will remove all reads that have a 31-mer match to short sequences, allowing one mismatch
+
+"stats" will produce a report of which contaminant sequences were seen
+
+The “outm” stream will catch reads that matched a reference kmers
+
+]
+
+---
+
+# BBDuk - Kmer filtering .rightH1[
+`r fontawesome::fa("broom", fill = "white")`
+]
+
+## Ribosomal removal
+
+```
+> bbduk.sh in=reads.fq out=unmatched.fq outm=matched.fq ref=ribosomal.fa.gz k=31 hdist=1 stats=stats.txt
+``` 
+<br>
+.par23[
+This will remove all reads that have a 31-mer match to ribosomal sequences, allowing one mismatch
+
+"stats" will produce a report of which contaminant sequences were seen
+
+The “outm” stream will catch reads that matched a reference kmers
+
+]
+
+---
+
+# BBDuk - Kmer filtering .rightH1[
+`r fontawesome::fa("broom", fill = "white")`
+]
+
+## Genome removal
+
+```
+> bbduk.sh in=reads.fq out=unmatched.fq outm=matched.fq ref=genome.fa.gz k=31 hdist=1 stats=stats.txt
+``` 
+<br>
+.par23[
+This will remove all reads that have a 31-mer match to genome sequences, allowing one mismatch
+
+"stats" will produce a report of which contaminant sequences were seen
+
+The “outm” stream will catch reads that matched a reference kmers
+
+]
+
+---
+
+# BBNorm - Normalize .rightH1[
+`r fontawesome::fa("broom", fill = "white")`
+]
+
+## Normalize coverage
+
+```
+> bbnorm.sh in=reads.fq out=normalized.fq
+``` 
+<br>
+.par23[
+BBNorm is designed to normalize coverage by down-sampling reads, resulting in a flat coverage distribution
+
+This process can dramatically accelerate assembly and often improve assembly quality
+
+The resulting file can no be used for mapping purpose
+
+]
+
+---
+
+# Data cleaning .rightH1[
+`r fontawesome::fa("broom", fill = "white")`
+]
+
+## Resulting files
+
+```
+CP1_1.fastq.gz 5.6G
+CP1_2.fastq.gz 5.9G
+```
+<br>
+```
+CP1_1_clean.fastq.gz 352M
+CP1_2_clean.fastq.gz 449M
+```
+<br>
+```
+CP1_1_map.fastq.gz 1.8G
+CP1_2_map.fastq.gz 2.3G
+```
+
+---
+
+# Data cleaning .rightH1[
+`r fontawesome::fa("broom", fill = "white")`
+]
+
+```{r echo=FALSE, out.width="500px"}
+knitr::include_graphics("images/questions.png")
+```
+
+---
+
+class: middle, center, clear
+
+# .black[RNA-Seq De novo Assembly] 
+
+----
+
+---
+
+class: clear, middle, center
+
+.f70[.f900[Trinity]]
+
+.m0tp[
+.f15[https://github.com/trinityrnaseq/trinityrnaseq/wiki]
+]
+
+----
+
+---
+
+layout: true
+
+# Trinity .rightH1[
+`r fontawesome::fa("blackberry", fill = "white")`
+]
+
+---
+
+.pull-left[
+.m0tp[
+.par15[
+
+- Trinity, developed at the Broad Institute and the Hebrew University of Jerusalem, represents a novel method for the efficient and robust de novo reconstruction of transcriptomes from RNA-seq data
+
+- Trinity combines three independent software modules:
+  - **Inchworm** assembles the RNA-seq data into the unique sequences of transcripts, often generating full-length transcripts for a dominant isoform, but then reports just the unique portions of alternatively spliced transcripts
+
+  - **Chrysalis** clusters the Inchworm contigs into clusters and constructs complete de Bruijn graphs for each cluster. Each cluster represents the full transcriptonal complexity for a given gene (or sets of genes that share sequences in common). Chrysalis then partitions the full read set among these disjoint graphs.
+
+  - **Butterfly** then processes the individual graphs in parallel, tracing the paths that reads and pairs of reads take within the graph, ultimately reporting full-length transcripts for alternatively spliced isoforms, and teasing apart transcripts that corresponds to paralogous genes.
+]
+]
+]
+
+    
+.pull-right[
+```{r echo=FALSE, out.width="500px"}
+knitr::include_graphics("images/t1.png")
+```
+]
+
+---
+
+.pull-left[
+.m0tp[
+.par15[
+
+- Trinity, developed at the Broad Institute and the Hebrew University of Jerusalem, represents a novel method for the efficient and robust de novo reconstruction of transcriptomes from RNA-seq data
+
+- Trinity combines three independent software modules:
+  - **Inchworm** assembles the RNA-seq data into the unique sequences of transcripts, often generating full-length transcripts for a dominant isoform, but then reports just the unique portions of alternatively spliced transcripts
+
+  - **Chrysalis** clusters the Inchworm contigs into clusters and constructs complete de Bruijn graphs for each cluster. Each cluster represents the full transcriptonal complexity for a given gene (or sets of genes that share sequences in common). Chrysalis then partitions the full read set among these disjoint graphs.
+
+  - **Butterfly** then processes the individual graphs in parallel, tracing the paths that reads and pairs of reads take within the graph, ultimately reporting full-length transcripts for alternatively spliced isoforms, and teasing apart transcripts that corresponds to paralogous genes.
+]
+]
+]
+
+    
+.pull-right[
+```{r echo=FALSE, out.width="450px"}
+knitr::include_graphics("images/t2.png")
+```
+]
+
+---
+
+## Trinity commands
+
+- .font80[De-novo assembly]
+
+```
+> Trinity --seqType fq --max_memory 50G --left reads_1.fq  --right reads_2.fq --CPU 6
+```
+
+- .font80[Genome guides assembly]
+
+```
+> Trinity --genome_guided_bam rnaseq_alignments.csorted.bam --max_memory 50G --genome_guided_max_intron 10000 --CPU 6
+```
+
+---
+
+## Output of Trinity Assembly
+
+.par23[
+- When Trinity completes, it will create a 'Trinity.fasta' output file in the 'trinity\_out\_dir/' output directory
+
+- Trinity groups transcripts into clusters based on shared sequence content
+
+- Such a transcript cluster is very loosely referred to as a 'gene'
+
+- This information is encoded in the Trinity fasta accession
+
+]
+
+--
+
+```
+>TRINITY_DN1000_c115_g5_i1 len=247 path=[31015:0-148 23018:149-246]
+AATCTTTTTTGGTATTGGCAGTACTGTGCTCTGGGTAGTGATTAGGGCAAAAGAAGACAC
+ACAATAAAGAACCAGGTGTTAGACGTCAGCAAGTCAAGGCCTTGGTTCTCAGCAGACAGA
+AGACAGCCCTTCTCAATCCTCATCCCTTCCCTGAACAGACATGTCTTCTGCAAGCTTCTC
+CAAGTCAGTTGTTCACAGGAACATCATCAGAATAAATTTGAAATTATGATTAGTATCTGA
+TAAAGCA
+```
+
+---
+
+## Output of Trinity Assembly
+
+```
+>TRINITY_DN1000_c115_g5_i1 len=247 path=[31015:0-148 23018:149-246]
+AATCTTTTTTGGTATTGGCAGTACTGTGCTCTGGGTAGTGATTAGGGCAAAAGAAGACAC
+ACAATAAAGAACCAGGTGTTAGACGTCAGCAAGTCAAGGCCTTGGTTCTCAGCAGACAGA
+AGACAGCCCTTCTCAATCCTCATCCCTTCCCTGAACAGACATGTCTTCTGCAAGCTTCTC
+CAAGTCAGTTGTTCACAGGAACATCATCAGAATAAATTTGAAATTATGATTAGTATCTGA
+TAAAGCA
+```
+
+--
+
+.par20[
+
+**TRINITY_DN1000_c115**_g5_i1: indicates Trinity read cluster
+
+TRINITY_DN1000_c115_**g5**_i1: indicates Trinity gene
+
+TRINITY_DN1000_c115_g5_**i1**: indicates Trinity isoform
+
+**path=[31015:0-148 23018:149-246]**: indicates the path traversed in the Trinity compacted de Bruijn graph to construct that transcript 
+
+]
+
+--
+
+.right[Once your assembly is complete, you'll want to know how 'good' it is]
+
+---
+
+## Examine the RNA-Seq read representation of the assembly
+
+To assess the read composition of our assembly, we want to capture and count all reads that map to our assembled transcripts
+
+.font60[First, build a bowtie2 index for the transcriptome]
+
+```
+> bowtie2-build Trinity.fasta Trinity.fasta
+```
+
+.font60[Then perform the alignment to just capture the read alignment statistics]
+
+```
+> bowtie2 -p 10 -q --no-unal -k 20 -x Trinity.fasta -1 reads_1.fq -2 reads_2.fq  \
+     2>align_stats.txt| samtools view -@10 -Sb -o bowtie2.bam 
+```
+
+---
+
+## Examine the RNA-Seq read representation of the assembly
+
+To assess the read composition of our assembly, we want to capture and count all reads that map to our assembled transcripts
+
+.font60[Visualize statistics]
+
+.pull-left[
+.m0tp[
+.code50[
+```
+> cat 2>&1 align_stats.txt
+
+76201190 reads; of these:
+  76201190 (100.00%) were paired; of these:
+    18166307 (23.84%) aligned concordantly 0 times
+    17026716 (22.34%) aligned concordantly exactly 1 time
+    41008167 (53.82%) aligned concordantly >1 times
+    ----
+    18166307 pairs aligned concordantly 0 times; of these:
+      1769907 (9.74%) aligned discordantly 1 time
+    ----
+    16396400 pairs aligned 0 times concordantly or discordantly; of these:
+      32792800 mates make up the pairs; of these:
+        15287552 (46.62%) aligned 0 times
+        3874965 (11.82%) aligned exactly 1 time
+        13630283 (41.56%) aligned >1 times
+*89.97% overall alignment rate
+```
+]
+]
+]
+
+    
+.pull-right[
+Ideally, at least ~80% of your input RNA-Seq reads are represented by your transcriptome assembly
+]
+
+---
+
+## Post Transcriptome Assembly Downstream Analyses
+
+.par23[
+
+Once your assembly is complete, there are several analyses you will likely want to pursue to explore aspects of the biology of your organism based on your assembled transcripts and the input RNA-Seq data
+
+- **Quantifying transcript and gene abundance**. This is a prerequisite to many other analyses such as examining differentially expressed transcripts among your samples.
+
+- **Quality checking your samples and biological replicates**. Make sure the relationships among your samples and biological replicates make sense. If there are any confounding aspects to the data, such as outliers or batch effects, you'll want to catch them as early as possible and account for them in your further data explorations.
+
+- **Perform differential expression analysis**. Trinity provides direct support for several DE analysis methods, including edgeR, DESeq2, Limma/Voom, and ROTS.
+
+- **Extract coding regions** using TransDecoder and functionally annotate the transcripts using Trinotate.
+
+]
+
+---
+
+```{r echo=FALSE, out.width="500px"}
+knitr::include_graphics("images/questions.png")
+```
+
+---
+
+class: middle, center, clear
+
+# .black[Viral contig identification] 
+
+----
+
+---
+
+class: clear, middle, center
+
+.f70[.f900[NCBI BLAST+]]
+
+.m0tp[
+.f15[https://www.ncbi.nlm.nih.gov/books/NBK131777]
+]
+
+----
+
+---
+
+layout: true
+
+# BLAST+ .rightH1[
+`r fontawesome::fa("database", fill = "white")`
+]
+
+---
+
+## ViralDB creation - Proteins
+
+| Name | group | taxid |
+|---|---|---|
+|Virtovirus|genus|txid1925802|
+|Papanivirus|genus|txid1921431|
+|Aumaivirus|genus|txid1917979|
+|Albetovirus|genus|txid1915204|
+|Sarthroviridae|family|txid1922240|
+|Polymycoviridae|family|txid2732900|
+|Cressdnaviricota|phylum|txid2732416|
+|Orthornavirae|kingdom|txid2732396|
+
+.center.font70[https://www.ncbi.nlm.nih.gov/labs/virus/vssi/#/]
+
+---
+
+## Diamond blast
+
+.content-box-red[
+**DIAMOND** is a sequence aligner for protein and translated DNA searches, designed for high performance analysis of big sequence data
+]
+
+.par23[
+The key features are:
+
+- Pairwise alignment of proteins and translated DNA at 100x-20,000x speed of BLAST.
+
+- Low resource requirements and suitable for running on standard desktops or laptops.
+    
+- Various output formats, including BLAST pairwise, tabular and XML, as well as taxonomic classification.
+]
+
+---
+
+## Diamond blast
+
+.font70[Prepare viral database]
+
+```
+> diamond makedb --in viralDB.faa -d ViralDB
+```
+
+.font70[Make blast]
+
+```
+# Alignment
+> diamond blastx -p30 -d viralDB -q trinity_out_dir.Trinity.fasta \
+  -o CP1_DiamondBlast.blast -f 0 -k 2 --unal 0 --very-sensitive
+```
+
+```
+# Tabular
+> diamond blastx -p30 -d viralDB -q trinity_out_dir.Trinity.fasta \
+  -o CP1_DiamondBlast.tab -f 6 qseqid qlen sseqid slen pident length \
+  mismatch gapopen qstart qend sstart send evalue bitscore -k 2 --unal 0 --very-sensitive
+```
+
+---
+
+## Alignment output
+
+.code40[
+```
+Query= TRINITY_DN1830_c0_g1_i42 len=4362 path=[0:0-172 2:173-354 3:355-355 4:356-646 6:647-936 8:937-1831 10:1832-1840 12:1841-1921 13:1922-2257 15:2258-2366 16:2367-2600 17:2601-2964 18:2965-3936 19:3937-4361]
+
+Length=4362
+
+>APY28336.1 |dUTPAse-like protein [pasivirus A3]
+Length=140
+
+ Score = 72.8 bits (177),  Expect = 2.4e-10
+  Identities = 40/118 (33%), Positives = 59/118 (50%), Gaps = 0/118 (0%)
+   Frame = -2
+
+Query  4154  DTMAAPPLMIKRLSEKARLPTRGSAFAAGYDIYASKPTVIPARGKALVDTDISMACPPGT 3975
+             D    P L  +RLS  A LP++    +  YD+Y +  T IP   + ++ TDI +  P   
+             Sbjct     7  DERPVPRLGFERLSPAALLPSQNPKRSMTYDLYCAYSTTIPPHDRRVLLTDIRVYVPESC 66
+
+Query  3974  YGRIAPRSGLASKHFIDTGAGVIDADYRGQVKILLFNHSEADFSVSEGDRVAQLVLER 3801
+             YG I PR     K F+D G G ++ + R  + I  FN S++ FS   GD +  + L R
+             Sbjct    67  YGVIEPRCVFDPKFFLDAGKGCVEHNCRDNISITFFNLSDSPFSFRRGDMLCSVTLFR 124
+```
+]
+
+## Tabular output
+
+.code40[
+```
+*TRINITY_DN1830_c0_g1_i42        4362    APY28336.1      140     33.9    118     78      0       4154    3801    7       124      2.4e-10 72.8
+TRINITY_DN1830_c0_g1_i7 4253    APY28336.1      140     33.9    118     78      0       4045    3692    7       124     2.3e-10  72.8
+TRINITY_DN1853_c0_g2_i6 5154    QJC19294.1      4920    22.2    451     272     16      4236    2908    3107    3486    1.3e-07  63.9
+TRINITY_DN1853_c0_g2_i6 5154    ATB20098.1      4920    22.0    451     273     16      4236    2908    3107    3486    1.3e-07  63.9
+TRINITY_DN1853_c0_g2_i2 5332    QJC19294.1      4920    22.2    451     272     16      4320    2992    3107    3486    1.3e-07  63.9
+TRINITY_DN1853_c0_g2_i2 5332    ATB20098.1      4920    22.0    451     273     16      4320    2992    3107    3486    1.3e-07  63.9
+TRINITY_DN1853_c0_g2_i3 5334    QJC19294.1      4920    22.2    451     272     16      4416    3088    3107    3486    1.3e-07  63.9
+TRINITY_DN1853_c0_g2_i3 5334    ATB20098.1      4920    22.0    451     273     16      4416    3088    3107    3486    1.3e-07  63.9
+TRINITY_DN1853_c0_g2_i7 5238    QJC19294.1      4920    22.2    451     272     16      4320    2992    3107    3486    1.3e-07  63.9
+TRINITY_DN1853_c0_g2_i7 5238    ATB20098.1      4920    22.0    451     273     16      4320    2992    3107    3486    1.3e-07  63.9
+```
+]
+
+---
+
+## Tabular makeup
+
+<br>
+.table10[
+|Pool|qseqid|qlen|sseqid|slen|pident|length|evalue|Org|Description|ID|
+|---|---|---|---|---|---|---|---|---|---|---|
+|CP1|TRINITY_DN1010_c1_g1_i12|2473|QDH89109.1|224|76.1|209|2.4e-92|Picornavirales sp.|"hypothetical protein H1BulkLitter557_000002 partial"|CP1_TRINITY_DN1010_c1_g1_i12|
+|CP1|TRINITY_DN1048_c0_g1_i37|6656|YP_874188.1|599|23.6|440|2e-13|Raspberry leaf mottle virus|HSP 70h|CP1_TRINITY_DN1048_c0_g1_i37|
+|CP1|TRINITY_DN105_c0_g1_i39|1922|QJE50384.1|452|100|35|3.6e-11|Mammalian orthoreovirus 5|Sigma 2|CP1_TRINITY_DN105_c0_g1_i39|
+|CP1|TRINITY_DN1079_c1_g2_i2|4896|QDH91349.1|325|45.9|279|3.4e-58|Partitiviridae sp.|"hypothetical protein H3Bulk427771_000001 partial"|CP1_TRINITY_DN1079_c1_g2_i2|
+|CP1|TRINITY_DN116_c2_g1_i1|7773|QLL27747.1|1466|22.8|180|1.3e-6|Leveillula taurica associated alphamesonivirus 1|"putative helicase partial"|CP1_TRINITY_DN116_c2_g1_i1|
+|CP1|TRINITY_DN1179_c0_g1_i4|4529|QDH91227.1|467|24.5|220|2.1e-6|Riboviria sp.|hypothetical protein H4RhizoLitter191464_000002|CP1_TRINITY_DN1179_c0_g1_i4|
+|CP1|TRINITY_DN1183_c0_g1_i8|6656|QDH91349.1|325|40.9|237|1.1e-40|Partitiviridae sp.|"hypothetical protein H3Bulk427771_000001 partial"|CP1_TRINITY_DN1183_c0_g1_i8|
+|CP1|TRINITY_DN1183_c1_g2_i2|2575|AHC94771.1|550|30|423|4.5e-33|Human orthopneumovirus|firefly luciferase|CP1_TRINITY_DN1183_c1_g2_i2|
+]
+
+---
+## Manual inspection of the alignment results
+
+
+## Naive tabular approach
+
+----
+
+<br>
+
+.content-box-blue[
+In both cases the output is a fasta file containing the selected contigs <br>**possible viral contigs**
+]
+
+---
+
+## Diamond blast
+
+.font70[Prepare NCBInr database]
+
+```
+> diamond makedb --in NCBInr.faa -d NCBInr
+```
+
+.font70[Make blast]
+
+```
+# Alignment
+> diamond blastx -p30 -d NCBInr -q CP1_viralDB_selection.fasta \
+  -o CP1_viralDB_selection.blast -f 0 -k 2 --unal 0 --very-sensitive
+```
+
+```
+# Tabular
+> diamond blastx -p30 -d viralDB -q CP1_viralDB_selection.fasta \
+  -o CP1_viralDB_selection.tab -f 6 qseqid qlen sseqid slen pident length \
+  mismatch gapopen qstart qend sstart send evalue bitscore -k 2 --unal 0 --very-sensitive
+```
+
+---
+
+.content-box-red[
+Blast against NCBInr allows to identify the contigs that are not viral
+<br>
+They can be fragments integrated in the host genome
+]
+<br>
+.table10[
+|qseqid|qlen|sseqid|slen|pident|length|evalue|DESC|TAXO|
+|---|---|---|---|---|---|---|---|---|
+|**CP1_TRINITY_DN1183_c1_g2_i2**|**2575**|**KAF3761644.1**|**647**|**100**|**647**|**0**|**acetyl-CoA synthetase-like protein [Cryphonectria parasitica EP155]**|**Fungi**|
+|**CP1_TRINITY_DN1274_c0_g1_i5**|**3017**|**KAF3761985.1**|**699**|**100**|**672**|**0**|**acetyl-CoA synthetase-like protein [Cryphonectria parasitica EP155]**|**Fungi**|
+|**GNO_TRINITY_DN6423_c0_g2_i1**|**3795**|**ROW18252.1**|**994**|**89.3**|**1002**|**0**|**hypothetical protein VPNG_00226 [Cytospora leucostoma]**|**Fungi**|
+|**CP1_TRINITY_DN1611_c0_g1_i1**|**3536**|**ROV98340.1**|**821**|**96.7**|**821**|**0**|**hypothetical protein VMCG_07088 [Valsa malicola]**|**Fungi**|
+|CP1_TRINITY_DN37_c0_g2_i1|12722|AUZ41744.1|3164|99.4|3164|0|ORF B [Cryphonectria hypovirus 1]|Viruses|
+|CP2_TRINITY_DN16_c0_g1_i6|12735|AUZ41744.1|3164|99.4|3164|0|ORF B [Cryphonectria hypovirus 1]|Viruses|
+|GNO_TRINITY_DN159_c0_g1_i4|2417|AHF48631.1|703|67.1|695|6E-268|RNA-dependent RNA polymerase [Sclerotinia sclerotiorum mitovirus 15]|Viruses|
+|GNO_TRINITY_DN412_c0_g1_i5|3538|YP_009507948.1|1108|63.8|1107|0|RNA-dependent RNA polymerase [Verticillium dahliae chrysovirus 1]|Viruses|
+|GNO_TRINITY_DN509_c0_g1_i9|2875|BBJ21309.1|824|71.2|823|0|cysteine protease [Cryphonectria nitschkei chrysovirus 1]|Viruses|
+|GNO_TRINITY_DN530_c0_g1_i8|3303|BBJ21310.1|758|43.9|765|3.3E-176|replicase associated protein [Cryphonectria nitschkei chrysovirus 1]|Viruses|
+|GNO_TRINITY_DN535_c0_g1_i5|3639|ACT79254.1|906|70.4|538|2.1E-216|capsid protein [Cryphonectria nitschkei chrysovirus 1]|Viruses|
+]
+
+---
+
+## Final list with viral contigs
+
+.table10[
+|qseqid|qlen|sseqid|slen|pident|length|evalue|DESC|TAXO|
+|---|---|---|---|---|---|---|---|---|
+|CP1_TRINITY_DN1183_c1_g2_i2|2575|KAF3761644.1|647|100|647|0|acetyl-CoA synthetase-like protein [Cryphonectria parasitica EP155]|Fungi|
+|CP1_TRINITY_DN1274_c0_g1_i5|3017|KAF3761985.1|699|100|672|0|acetyl-CoA synthetase-like protein [Cryphonectria parasitica EP155]|Fungi|
+|GNO_TRINITY_DN6423_c0_g2_i1|3795|ROW18252.1|994|89.3|1002|0|hypothetical protein VPNG_00226 [Cytospora leucostoma]|Fungi|
+|CP1_TRINITY_DN1611_c0_g1_i1|3536|ROV98340.1|821|96.7|821|0|hypothetical protein VMCG_07088 [Valsa malicola]|Fungi|
+|**CP1_TRINITY_DN37_c0_g2_i1**|**12722**|**AUZ41744.1**|**3164**|**99.4**|**3164**|**0**|**ORF B [Cryphonectria hypovirus 1]**|**Viruses**|
+|**CP2_TRINITY_DN16_c0_g1_i6**|**12735**|**AUZ41744.1**|**3164**|**99.4**|**3164**|**0**|**ORF B [Cryphonectria hypovirus 1]**|**Viruses**|
+|GNO_TRINITY_DN159_c0_g1_i4|2417|AHF48631.1|703|67.1|695|6E-268|RNA-dependent RNA polymerase [Sclerotinia sclerotiorum mitovirus 15]|Viruses|
+|GNO_TRINITY_DN412_c0_g1_i5|3538|YP_009507948.1|1108|63.8|1107|0|RNA-dependent RNA polymerase [Verticillium dahliae chrysovirus 1]|Viruses|
+|GNO_TRINITY_DN509_c0_g1_i9|2875|BBJ21309.1|824|71.2|823|0|cysteine protease [Cryphonectria nitschkei chrysovirus 1]|Viruses|
+|GNO_TRINITY_DN530_c0_g1_i8|3303|BBJ21310.1|758|43.9|765|3.3E-176|replicase associated protein [Cryphonectria nitschkei chrysovirus 1]|Viruses|
+|GNO_TRINITY_DN535_c0_g1_i5|3639|ACT79254.1|906|70.4|538|2.1E-216|capsid protein [Cryphonectria nitschkei chrysovirus 1]|Viruses|
+]
+
+.par15[
+1. Viral contigs that present an **identity higher 90%** with viruses already present on NCBI are viruses present in the analysed sample, but already discovered
+
+]
+
+---
+
+## Final list with viral contigs
+
+.table10[
+|qseqid|qlen|sseqid|slen|pident|length|evalue|DESC|TAXO|
+|---|---|---|---|---|---|---|---|---|
+|CP1_TRINITY_DN1183_c1_g2_i2|2575|KAF3761644.1|647|100|647|0|acetyl-CoA synthetase-like protein [Cryphonectria parasitica EP155]|Fungi|
+|CP1_TRINITY_DN1274_c0_g1_i5|3017|KAF3761985.1|699|100|672|0|acetyl-CoA synthetase-like protein [Cryphonectria parasitica EP155]|Fungi|
+|GNO_TRINITY_DN6423_c0_g2_i1|3795|ROW18252.1|994|89.3|1002|0|hypothetical protein VPNG_00226 [Cytospora leucostoma]|Fungi|
+|CP1_TRINITY_DN1611_c0_g1_i1|3536|ROV98340.1|821|96.7|821|0|hypothetical protein VMCG_07088 [Valsa malicola]|Fungi|
+|CP1_TRINITY_DN37_c0_g2_i1|12722|AUZ41744.1|3164|99.4|3164|0|ORF B [Cryphonectria hypovirus 1]|Viruses|
+|CP2_TRINITY_DN16_c0_g1_i6|12735|AUZ41744.1|3164|99.4|3164|0|ORF B [Cryphonectria hypovirus 1]|Viruses|
+|**GNO_TRINITY_DN159_c0_g1_i4**|**2417**|**AHF48631.1**|**703**|**67.1**|**695**|**6E-268**|**RNA-dependent RNA polymerase [Sclerotinia sclerotiorum mitovirus 15]**|**Viruses**|
+|**GNO_TRINITY_DN412_c0_g1_i5**|**3538**|**YP_009507948.1**|**1108**|**63.8**|**1107**|**0**|**RNA-dependent RNA polymerase [Verticillium dahliae chrysovirus 1]**|**Viruses**|
+|**GNO_TRINITY_DN509_c0_g1_i9**|**2875**|**BBJ21309.1**|**824**|**71.2**|**823**|**0**|**cysteine protease [Cryphonectria nitschkei chrysovirus 1]**|**Viruses**|
+|**GNO_TRINITY_DN530_c0_g1_i8**|**3303**|**BBJ21310.1**|**758**|**43.9**|**765**|**3.3E-176**|**replicase associated protein [Cryphonectria nitschkei chrysovirus 1]**|**Viruses**|
+|**GNO_TRINITY_DN535_c0_g1_i5**|**3639**|**ACT79254.1**|**906**|**70.4**|**538**|**2.1E-216**|**capsid protein [Cryphonectria nitschkei chrysovirus 1]**|**Viruses**|
+]
+
+.par15[
+1. Viral contigs that present an **identity higher 90%** with viruses already present on NCBI are viruses present in the analysed sample, but already discovered
+
+1. Viral contigs that present an **identity lower 90%** with viruses already present on NCBI are viruses are new discovered viruses
+
+.center.red.code60[
+From now, only the new discovered viruses will be taken into account
+]
+]
+
+---
+
+```{r echo=FALSE, out.width="500px"}
+knitr::include_graphics("images/questions.png")
+```
+
+---
+
+class: middle, center, clear
+
+# .black[Uni-virus list definition] 
+
+----
+
+---
+
+class: clear, middle, center
+
+.f70[.f900[R]]
+
+.m0tp[
+.f15[https://cran.r-project.org/]
+]
+
+----
+
+---
+
+layout: true
+
+# Univirus .rightH1[
+`r fontawesome::fa("fingerprint", fill = "white")`
+]
+
+---
+
+<br><br>
+.content-box-red[
+Virus identification was performed separately for each library<br> to reduce redundancy of viruses present in different libraries<br> the results of each library were compared with the others<br> to obtain a list of unique viruses
+]
+
+---
+
+## STEP 1 - BLAST
+
+First of all we blasted all the selected viral contigs one aginst the other
+
+```
+> makeblastdb -in allVOI.fasta -dbtype nucl
+
+> blastn -query allVOI.fasta -db allVOI -outfmt 6 -out allVOI.tab -max_target_seqs 1
+```
+
+---
+
+## STEP 2 - CLUSTER
+
+1. Sequences are then groupped by identity in clusters (above 90%)
+
+1. For each cluster the master contig is selected. The master conting is the longer.
+
+1. Only the master contigs is reported (all the other sequences in the cluster have more than 90% identity)
+
+1. The shorter viral contigs of the group are discarted for the subsequent analysis
+
+---
+
+.pull-left[
+.m0tp[
+.code40[
+```
+###############################################################################
+# Script to parse the blast results of the comparison of all sequences agaist
+# all sequences
+#
+# Blast call was:
+# makeblastdb -in allVOI.fasta -dbtype nucl
+# blastn -query allVOI.fasta -db allVOI.fasta --max_target_seqs 1 -outfmt '6 qaccver saccver pident length 
+#   mismatch gapopen qstart qend sstart send evalue bitscore' -out allVOI_nucl.tab
+###############################################################################
+
+# Load libraries
+library(tidyverse)
+library(ggthemes)
+library(cowplot)
+
+# Read data
+df <- read_delim("allVOI_nucl.tab", delim = "\t", col_names = FALSE)
+names(df) <- c("query", "subject", "identity", "alignment_length", "mismatches",
+               "gaps", "q.start", "q.end", "s.start", "s.end", "evalue", "bit score")
+
+# Transform data 
+#' split column to have individual pieces of information
+#' Done both for query and for subject
+#' id is the threshold for identity
+id <- 90
+#' alignment_length should be longer than 1000
+df1 <- df %>%
+    mutate(qPool = str_replace(query, "(DMG\\-[:upper:]|DMS\\d+).*", "\\1")) %>%
+    mutate(qTrinity = str_replace(query, ".*(TRINITY_\\w*_c\\d_g+\\d_i+\\d+|Contig\\d+).*", "\\1")) %>%
+    mutate(qVirus = str_replace(query, ".*_i\\d+_(.*)_len=.*|.*Contig\\d+_(.*)_len=.*", "\\1\\2"),
+           qVirus = str_replace_all(qVirus, "-", " ")) %>%
+    mutate(qLength = str_replace(query, ".*len=(\\d*)", "\\1")) %>%
+    mutate(sPool = str_replace(subject, "(DMG\\-[:upper:]|DMS\\d+).*", "\\1")) %>%
+    mutate(sTrinity = str_replace(subject, ".*(TRINITY_\\w*_c\\d+_g\\d+_i\\d+|Contig\\d+).*", "\\1")) %>%
+    mutate(sVirus = str_replace(subject, ".*_i\\d_(.*)_len=.*|.*Contig\\d+_(.*)_len=.*", "\\1\\2"),
+           sVirus = str_replace_all(sVirus, "-", " ")) %>%
+    mutate(sLength = str_replace(subject, ".*len=(\\d*)", "\\1")) %>%
+    select(qPool:sLength, identity:`bit score`, query, subject) %>%
+    mutate(self = case_when(query == subject ~ 1,
+                            TRUE ~ 0),
+           identOver = case_when(identity >= id ~ 1,
+                                 TRUE ~ 0),
+           alignment_identity = case_when(alignment_length > 1000 ~ 1,
+                                          TRUE ~ 0)) %>%
+    mutate(Group = NA)
+```
+]
+]
+]
+
+.pull-right[
+.m0tp[
+.code40[
+```
+###############################################################################
+# Remove duplicates
+###############################################################################
+# Extract the full list of query IDs
+qq <- df1 %>% 
+    arrange(desc(as.numeric(qLength))) %>%
+    pull(query) %>%
+    unique()
+
+# Remove the duplicates
+for ( i in 1:nrow(df1)){
+    tmp <- NULL
+    tmp <- df1 %>%
+        filter(query == qq[i]) %>%
+        filter(alignment_identity != 0) %>%
+        filter(identOver == 1) %>%
+        filter(subject != qq[i]) %>%
+        pull(subject)
+    qq <- qq[!(qq %in% tmp)]
+    df1 <- df1 %>%
+        filter(!(query %in% tmp))
+}
+
+###############################################################################
+# Filter data
+###############################################################################
+# Create groups
+df2 <- df1 %>%
+    group_by(query) %>%
+    mutate(Group = ifelse(identity > id, query, NA)) %>%
+    select(-(mismatches:evalue)) %>%
+    ungroup
+
+# Remove contigs not in groups and with alignment lenght below the threshold
+df3 <- df2 %>%
+    filter(!is.na(Group)) %>%
+    filter(alignment_identity == 1) %>%
+    ungroup
+
+# Remove query duplicates based on alignment_length, identity and bit score
+df4 <- df3 %>%
+    group_by(Group) %>%
+    top_n(1, alignment_length) %>%
+    top_n(1, identity) %>%
+    top_n(1, `bit score`) %>%
+    ungroup
+```
+
+]
+]
+]
+
+---
+
+class: middle, center, clear
+
+# .black[Mapping] 
+
+----
+
+---
+
+class: clear, middle, center
+
+.f70[.f900[Bowtie2 - Samtools]]
+
+.m0tp[
+.f15[http://bowtie-bio.sourceforge.net/bowtie2/index.shtml - http://www.htslib.org/]
+]
+
+----
+
+---
+
+layout: true
+
+# Mapping .rightH1[
+`r fontawesome::fa("layer-group", fill = "white")`
+]
+
+---
+
+## Mapping: align reads to reference sequences (or contigs)
+
+.par23[
+- Bowtie 2 is an ultrafast and memory-efficient tool for aligning sequencing reads to long reference sequences
+
+- Bowtie 2 outputs alignments in SAM format, enabling interoperation with a large number of other tools (e.g. SAMtools) that use SAM
+
+- Bowtie 2 is often the first step in pipelines for comparative genomics, including for variation calling, ChIP-seq, RNA-seq, BS-seq
+
+- Sequence Alignment Map (SAM) is a text-based format originally for storing biological sequences aligned to a reference sequence
+
+- The binary equivalent of a SAM file is a Binary Alignment Map (BAM) file, which stores the same data in a compressed binary representation
+]
+
+---
+
+## Bowtie2
+
+.code70[Prepare sequences to map]
+
+```
+> bowtie2-build -f viralContigs.fasta  tomap
+```
+
+.code70[Make the alignment]
+
+```
+bowtie2 -x tomap -1 CP1_1_map.fastq.gz -2 Cp1_2_map.fastq.gz  -p 20 --no-mixed --no-discordant --no-unal -S Cp1.sam
+```
+
+---
+
+## Samtools
+
+.m0b[
+Samtools is a suite of programs for interacting with high-throughput sequencing data
+]
+
+.pull-left[
+.m0tb[
+.par20[
+.code60[Extract all the alignment]
+
+```
+> samtools view -@20 -Sb Cp1.sam -o Cp1.bam
+```
+
+.code60[Sort alignments by leftmost coordinates]
+```
+> samtools sort -@ 10 -m 5G Cp1.bam -o Cp1.sort.bam
+```
+
+.code60[Index a coordinate for fast random access]
+```
+> samtools index Cp1.sort.bam
+```
+
+.code60[Retrieve and print stats in the index file]
+```
+> samtools idxstats Cp1.sort.bam > Cp1.sort.bam.counted.txt
+```
+]
+]
+]
+---
+
+## Samtools
+
+.m0b[
+Samtools is a suite of programs for interacting with high-throughput sequencing data
+]
+
+.pull-left[
+.m0tb[
+.par20[
+.code60[Extract all the alignment]
+
+```
+> samtools view -@20 -Sb Cp1.sam -o Cp1.bam
+```
+
+.code60[Sort alignments by leftmost coordinates]
+```
+> samtools sort -@ 10 -m 5G Cp1.bam -o Cp1.sort.bam
+```
+
+.code60[Index a coordinate for fast random access]
+```
+> samtools index Cp1.sort.bam
+```
+
+.code60[Retrieve and print stats in the index file]
+```
+> samtools idxstats Cp1.sort.bam > Cp1.sort.bam.counted.txt
+```
+]
+]
+]
+
+.pull-right[
+.m0tp[
+.table10[
+|Transcript| Len| Mapped|
+|---|---|---|
+|TRINITY_DN10266_c0_g1_i1|        2495|    722300|  
+|TRINITY_DN8498_c0_g1_i1 |        2465|    423606|
+|TRINITY_DN11312_c0_g1_i2|        4608|    111748|  
+|TRINITY_DN11312_c0_g2_i2|        4569|    25476 |  
+|TRINITY_DN11312_c0_g3_i1|        2052|    4058  |  
+|TRINITY_DN11729_c0_g1_i3|        4211|    40372 |  
+|TRINITY_DN11243_c0_g1_i1|        1689|    21908 |  
+|TRINITY_DN11055_c0_g1_i1|        6334|    3330  |  
+|TRINITY_DN7956_c0_g1_i1 |        5878|    16558 |
+]
+]
+]
+---
+
+## Samtools
+
+.m0b[
+Since the sequencing was stranded, reads mapping on forward or reverse strand can be infer
+]
+
+.pull-left[
+.m0tb[
+.par10[
+.code60[Extract alignment from the first segment in the template (read1)]
+
+```
+> samtools view -F 64 -b -@20 -Sb Cp1.sort.bam -o Cp1.RR.sort.bam
+```
+
+.code60[Extract alignment on the reverse and foeward strand]
+
+```
+> samtools view -f 0x10 -b Cp1.RR.sort.bam -o Cp1.negativeStrand.RR.sort.bam
+> samtools view -F 0x10 -b Cp1.RR.sort.bam -o Cp1.positiveStrand.RR.sort.bam
+```
+
+.code60[Index the Stranded files]
+```
+> samtools index Cp1.negativeStrand.RR.sort.bam
+> samtools index Cp1.positiveStrand.RR.sort.bam
+```
+
+.code60[Retrieve and print stats in the index file]
+```
+> samtools idxstats Cp1.negativeStrand.RR.sort.bam > Cp1.negativeStrand.RR.sort.bam.counted.txt
+> samtools idxindex Cp1.positiveStrand.RR.sort.bam > Cp1.positiveStrand.RR.sort.bam.counted.txt
+```
+]
+]
+]
+
+---
+
+## Samtools
+
+.m0b[
+Since the sequencing was stranded, reads mapping on forward or reverse strand can be infer
+]
+
+.table10[
+|Transcript|Len|THR-A_All|THR-A_Negative|THR-A_Positive|THR-B_All|THR-B_Negative|THR-B_Positive|
+|---|---|---|---|---|---|---|---|
+|ThassRNAV1|19679|8504|70|8434|0|0|0|
+|ThassRNAV10|6357|10|10|0|26|24|2|
+|ThassRNAV12|4173|0|0|0|3832|4|3828|
+|ThassRNAV14|3135|0|0|0|6868|12|6856|
+|ThassRNAV15|2816|18|0|18|25084|118|24966|
+|ThassRNAV16|2646|0|0|0|198|28|170|
+|ThassRNAV19|1541|0|0|0|4614|4|4610|
+|ThassRNAV2|14242|18342|52|18290|0|0|0|
+|ThassRNAV23|3063|60|0|60|10710|18|10692|
+|ThassRNAV24|2856|43696|48|43648|159906|148|159758|
+|ThassRNAV25|1604|15640|22|15618|63554|86|63468|
+|ThassRNAV26|3345|25866|18|25848|882|0|882|
+]
+
+---
+
+class: middle, center, clear
+
+# .black[Taxonomy classification] 
+
+----
+
+---
+
+class: clear, middle, center
+
+.f70[.f900[Kraken2 - Pavian]]
+
+.m0tp[
+.f15[https://ccb.jhu.edu/software/kraken2 - https://github.com/fbreitwieser/pavian]
+]
+
+----
+
+---
+
+layout: true
+
+# Taxonomy classification .rightH1[
+`r fontawesome::fa("code-branch", fill = "white")`
+]
+
+---
+
+## Kraken2
+
+.par25[
+- Kraken 2 is a taxonomic classification system using exact k-mer matches to achieve high accuracy and fast classification speeds
+
+- This classifier matches each k-mer within a query sequence to the lowest common ancestor (LCA) of all genomes containing the given k-mer.
+
+- The k-mer assignments inform the classification algorithm
+
+]
+
+---
+
+## Kraken2
+
+.pull-left[
+.par25[
+Download and install a taxonomy
+
+```
+> kraken2-build --download-library --db $DBNAME
+```
+
+Build the database
+
+```
+> kraken2-build --build --db $DBNAME
+```
+
+Classify a set of sequences
+
+```
+> kraken2 --db $DBNAME seqs.fa --report KrakenResults.txt
+```
+]]
+
+.pull-right[
+.par15[
+$DBNAME
+
+- archaea: RefSeq complete archaeal genomes/proteins
+- bacteria: RefSeq complete bacterial genomes/proteins
+- plasmid: RefSeq plasmid nucleotide/protein sequences
+- viral: RefSeq complete viral genomes/proteins
+- human: GRCh38 human genome/proteins
+- fungi: RefSeq complete fungal genomes/proteins
+- plant: RefSeq complete plant genomes/proteins
+- protozoa: RefSeq complete protozoan genomes/proteins
+- nr: NCBI non-redundant protein database
+- nt: NCBI non-redundant nucleotide database
+- UniVec: NCBI-supplied database of vector, adapter, linker, and primer sequences that may be contaminating sequencing projects and/or assemblies
+- UniVec_Core: A subset of UniVec chosen to minimize false positive hits to the vector database
+- env_nr and env_nt are no longer supported by NCBI and therefore are no longer available for download.
+
+]
+]
+
+---
+
+## Kraken2
+
+.pullL[
+.table10[
+|PCF|NFC|NFA|RANK|taxID|Name|
+|---|---|---|---|---|---|
+|11.22	|5829360	|5829360	|U	|0|unclassified
+| 88.77	|46102683	|118688	    |R	|1|root
+| 88.52	|45968988	|83131	    |R1	|131567|cellular organisms
+| 87.14	|45251771	|7780640    |D	|2759|Eukaryota
+| 69.65	|36171445	|152301	    |D1	|33154|Opisthokonta
+| 69.10	|35884157	|9063	    |K	|33208|Metazoa
+| 69.08	|35873749	|144551	    |K1	|6072|Eumetazoa
+| 68.77	|35713975	|349190	    |K2	|33213|Bilateria
+| 66.38	|34475552	|243088	    |K3	|33317|Protostomia
+| 65.74	|34142026	|13642	    |K4	|1206794|Ecdysozoa
+| 65.67	|34104628	|1151	    |K5	|88770|Panarthropoda
+| 65.67	|34103393	|85472	    |P	|6656|Arthropoda
+| 65.47	|34002715	|4364	    |P1	|197563|Mandibulata
+| 65.47	|33997966	|105933	    |P2	|197562|Pancrustacea
+| 65.20	|33862221	|5616	    |P3	|6960|Hexapoda
+| 65.19	|33853865	|723	    |C	|50557|Insecta
+
+]]
+
+.pullM[
+.table10[
+|PCF|NFC|NFA|RANK|taxID|Name|
+|---|---|---|---|---|---|
+| 65.19	|33853073	|162	    |C1	|85512|Dicondylia
+| 65.19	|33852748	|7179	    |C2	|7496|Pterygota
+| 65.17	|33843800	|488178	    |C3	|33340|Neoptera
+| 62.07	|32236575	|85232	    |C4	|33342|Paraneoptera
+| 61.83	|32109081	|2166	    |O	|30262|Thysanoptera
+| 61.82	|32106604	|5403	    |O1	|38130|Terebrantia
+| 61.74	|32062963	|3	        |O2	|45049|Thripoidea
+| 61.74	|32062879	|161542	    |F	|45053|Thripidae
+| 61.42	|31894673	|115896	    |F1	|153976|Thripinae
+| 60.02	|31168390	|15598	    |G	|45059|Frankliniella
+| 59.91	|31112953	|31112953	|S	|133901|Frankliniella occidentalis
+|  0.04	|22870	    |22870	    |S	|163893|Frankliniella intonsa
+|  0.03	|14747	    |14747	    |S	|407007|Frankliniella bispinosa
+|  0.00	|1024	    |1024	    |S	|1734071|Frankliniella brunnea
+|  0.00	|426	    |426	    |S	|1734075|Frankliniella rostrata
+|  0.00	|334	    |334	    |S	|2599113|Frankliniella xanthaner
+
+]]
+
+.pullR[
+.m0[
+.par15[
+- **PCF**: Percentage of fragments covered by the clade rooted at this taxon
+- **NFC**: Number of fragments covered by the clade rooted at this taxon
+- **NFA**: Number of fragments assigned directly to this taxon
+ - **Rank**: A rank code, indicating 
+   - (**U**)nclassified
+   - (**R**)oot
+   - (**D**)omain
+   - (**K**)ingdom
+   - (**P**)hylum
+   - (**C**)lass 
+   - (**O**)rder
+   - (**F**)amily
+   - (**G**)enus
+   - (**S**)pecies. 
+   - .font90[NB: Taxa that are not at any of these 10 ranks have a rank code that is formed by using the rank code of the closest ancestor rank with a number indicating the distance from that rank]
+- **taxID**: NCBI taxonomic ID number
+- **Name**: Indented scientific name
+
+]]]
+
+---
+
+## Pavian
+
+.pull-left[
+.par23[
+- Pavian is a interactive browser application for analyzing and visualization metagenomics classification results
+
+- With Pavian, researchers can analyze, display and transform results from the Kraken classifier using interactive tables, heatmaps and flow diagrams
+
+- Pavian is implemented in the R language and based on the Shiny framework. It can be hosted on Windows, Mac OS X and Linux systems
+
+- It is freely available on Github under a GPL-3 license
+]
+]
+
+    
+.pull-right[
+.m0[
+```{r echo=FALSE, out.width="300px"}
+knitr::include_graphics("images/pav1.png")
+knitr::include_graphics("images/pav2.png")
+```
+]]
+
+---
+
+## Pavian
+
+.pull-left[
+.par23[
+- Pavian is a interactive browser application for analyzing and visualization metagenomics classification results
+
+- With Pavian, researchers can analyze, display and transform results from the Kraken classifier using interactive tables, heatmaps and flow diagrams
+
+- Pavian is implemented in the R language and based on the Shiny framework. It can be hosted on Windows, Mac OS X and Linux systems
+
+- It is freely available on Github under a GPL-3 license
+]
+]
+
+    
+.pull-right[
+<br>
+.center[.f120[.f700[**DEMO**]]]
+]
+
+
+---
+
+
+class: middle, center, clear
+
+# .black[Orfans identification] 
+
+----
+
+---
+
+layout: true
+
+# Orfans identification .rightH1[
+`r fontawesome::fa("crosshairs", fill = "white")`
+]
+
+---
+
+## Step 1 - Blast search
+
+Assembled contigs from each library were submitted to a DIAMOND search of the NCBI non redundant whole database 
+
+```
+> diamond blastx -p20 -d nr -q mysequences.fasta -f 6 -k 1 -e 0.00001 --very-sensitive
+```
+
+## Step 2 - Filter out hits
+
+All contigs with a homologue were discarded, whereas the remaining contigs that were over 1 kbp in length and encoded a protein of at least 150 amino acids (~15 kDa) were kept
+
+---
+
+## Step 3 - Mapping
+
+Reads were mapped to those contigs considering their orientation, i.e. whether they mapped in sense or antisense orientation
+
+## Step 4 - Selection 
+
+All the contigs that showed only positive or only negative reads were discarded, since a typical feature of replicating viruses is the presence of a minus and plus sense genomic template for replication
+
+.center.red[
+**Final list of ORFANS**
+]
+
+---
+
+
+```{r echo=FALSE, out.width="500px"}
+knitr::include_graphics("images/questions.png")
+```
+---
+
+layout: false
+class: clear, middle, center
+
+.font300[`r fontawesome::fa("file-code", fill = "black")`] 
+
+.content-box-red[
+All the **scripts** and **pipeline details** are **freely available** <br>under GNU General Public License v3.0
+]
+<br>
+```{r echo=FALSE, out.width="700px"}
+knitr::include_graphics("images/license.png")
+```

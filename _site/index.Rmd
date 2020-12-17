@@ -1,0 +1,20 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+# Learn more about creating websites with Distill at:
+# https://rstudio.github.io/distill/website.html
+
+# Learn more about publishing to GitHub Pages at:
+# https://rstudio.github.io/distill/publish_website.html#github-pages
+
+```
+
+## Schedule
+
+| Day | Goal |
+|---|---|
+|Dec 15 (1 hour) | [Reproducible research](Pres/rr.html)|
+|Dec 15 (2 hours) | [Spreadsheet analysis](https://datacarpentry.org/spreadsheet-ecology-lesson/)|
+|Dec 18 (2 hours) | [R intro](https://datacarpentry.org/R-ecology-lesson/)
+|Dec 22 (2 hours) | [R intro](https://datacarpentry.org/R-ecology-lesson/)
+|Dec 22 (1 hour) | [Phylogenetic trees](Pres/Pres0.html)

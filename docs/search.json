@@ -5,7 +5,7 @@
       "title": "General introduction and presentations",
       "author": [],
       "contents": "\nRound table\nGeneral presentations\n\n\n\n\n",
-      "last_modified": "2020-12-13T08:39:20+01:00"
+      "last_modified": "2020-12-17T15:24:05+01:00"
     },
     {
       "path": "about.html",
@@ -13,22 +13,22 @@
       "description": "Some additional details about the website",
       "author": [],
       "contents": "\n\n\n\n",
-      "last_modified": "2020-12-13T08:39:21+01:00"
+      "last_modified": "2020-12-17T15:24:05+01:00"
     },
     {
       "path": "contacts.html",
       "title": "Contacts",
       "author": [],
       "contents": "\nPerson\nemail\nskype\nMarco Chiapello\nmarco.chiapello (at) ipsp.cnr.it\nmarpello1980\n\n\n\n",
-      "last_modified": "2020-12-13T08:39:22+01:00"
+      "last_modified": "2020-12-17T15:24:06+01:00"
     },
     {
       "path": "index.html",
-      "title": "LBMA - Corso di Laboratorio (analisi dati)",
+      "title": "LBMA - Wet lab module",
       "description": "Due to Sars-cov2 pandemic this course switched from wet to dry lab. We will focus our attention on **data analysis**.\n",
       "author": [],
       "contents": "\nSchedule\nDay\nGoal\nDec 15 (1 hour)\nReproducible research\nDec 15 (2 hours)\nSpreadsheet analysis\nDec 18 (2 hours)\nR intro\nDec 22 (2 hours)\nR intro\nDec 22 (1 hour)\nPhylogenetic trees\n\n\n\n",
-      "last_modified": "2020-12-13T08:39:22+01:00"
+      "last_modified": "2020-12-17T15:24:07+01:00"
     }
   ],
   "collections": []
