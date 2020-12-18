@@ -22,6 +22,5 @@ knitr::opts_chunk$set(echo = FALSE)
 |---|---|
 |Dec 15 (1 hour) | [Reproducible research](Pres/rr.html)|
 |Dec 15 (2 hours) | [Spreadsheet analysis](https://datacarpentry.org/spreadsheet-ecology-lesson/)|
-|Dec 18 (2 hours) | [R intro](https://datacarpentry.org/R-ecology-lesson/)
-|Dec 22 (2 hours) | [R intro](https://datacarpentry.org/R-ecology-lesson/)
-|Dec 22 (1 hour) | [Phylogenetic trees](Pres/phylogeneticTrees.html)
+|Dec 18 (2 hours) | [Manipulating, analyzing and exporting data with tidyverse](https://datacarpentry.org/R-ecology-lesson/03-dplyr.html#Data_manipulation_using_dplyr_and_tidyr)
+|Dec 22 (3 hours) | [Data visualization with ggplot2](https://datacarpentry.org/R-ecology-lesson/04-visualization-ggplot2.html)
