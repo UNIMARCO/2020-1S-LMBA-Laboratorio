@@ -82,18 +82,330 @@ layout: true
 
 ---
 
-## Terminology
-
-.par30[
-- What is a phylogenetic tree?
-- What is a branch of a phylogenetic tree?
-- What is the root of a phylogenetic tree?
-  ]
-
----
-
 ## What is a phylogenetic tree?
 
 .par30[
 A phylogenetic tree or evolutionary tree is a branching diagram or "tree" showing the evolutionary relationships among various biological species or other entities
 ]
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.48.32.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.48.57.png")
+```
+
+---
+
+## Which of these topologies are the same?
+
+```{r echo=FALSE, out.width="1000px"}
+knitr::include_graphics("images/15.49.06.png")
+```
+
+---
+
+## Rooting trees
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.49.27.png")
+```
+
+---
+
+## Branch lengths
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.50.12.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.50.22.png")
+```
+
+---
+
+## Common representations
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.50.37.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.50.54.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.51.17.png")
+```
+
+---
+
+## Newick format
+
+.par30[
+- A string describing tree topology and branch lengths
+- Popular input and output format for phylogenetic software
+- Example: (A:1,D:6,(((E:1,F:1):1,B:2):1,(C:4,G:2):2):1);
+<br><br>
+https://en.wikipedia.org/wiki/Newick_format
+]
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.54.35.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.54.44.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.54.56.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.55.01.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.55.04.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.55.13.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.55.20.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.55.25.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.55.36.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.55.41.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.55.45.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.55.54.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.56.04.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.56.09.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.56.13.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.56.19.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.56.23.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.56.28.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.56.33.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.56.38.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.56.45.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.56.55.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.57.00.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.57.12.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.57.17.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.57.22.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.57.29.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.57.41.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.57.46.png")
+```
+
+---
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/15.57.53.png")
+```
+
+---
+
+## Which sites are related?
+
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/17.24.07.png")
+```
+
+---
+
+## Differences indicated by an alignment
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/17.24.23.png")
+```
+
+---
+
+## Alignment for phylogenetics
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/17.24.30.png")
+```
+
+---
+
+## Columns in alignments should be homologous
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/17.25.18.png")
+```
+
+---
+
+## There is only one true tree
+```{r echo=FALSE, out.width="800px"}
+knitr::include_graphics("images/17.25.42.png")
+```
+
+---
+
+## Methodological approaches
+
+.par30[
+1. Distance matrix methods (pre-computed distances)
+	- UPGMA	assumes perfect molecular clock Sokal & Michener (1958) 
+	- Minimum evolution (e.g. Neighbour-joining, NJ) Saitou & Nei (1987)
+1. Maximum parsimony Fitch (1971)
+	- Minimises number of mutational steps 	
+1. Maximum likelihood, ML
+    - Evaluates statistical likelihood of alternative trees, based on an explicit model of substitution
+1. Bayesian methods
+    - Like ML but can incorporate prior knowledge
+]
+
+---
+
+## Methodological approaches
+
+.par30[
+
+1. .opacity10[Distance matrix methods (pre-computed distances)]
+	- .opacity10[UPGMA	assumes perfect molecular clock Sokal & Michener (1958) ]
+	- .opacity10[Minimum evolution (e.g. Neighbour-joining, NJ) Saitou & Nei (1987)]
+1. .opacity10[Maximum parsimony Fitch (1971)]
+	- .opacity10[Minimises number of mutational steps]
+1. Maximum likelihood, ML
+    - Evaluates statistical likelihood of alternative trees, based on an explicit model of substitution
+1. .opacity10[Bayesian methods ]
+	- .opacity10[Like ML but can incorporate prior knowledge ]
+]
+
+---
